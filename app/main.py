@@ -1,6 +1,6 @@
 from fastapi import FastAPI
-from app.routers.health import health_router
-from app.routers.orders import orders_router
+from app.health.router import health_router
+from app.orders.router import orders_router
 
 app = FastAPI()
 
