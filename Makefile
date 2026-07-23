@@ -1,7 +1,7 @@
 .PHONY: run test
 
 run:
-	uv run uvicorn src.main:app --reload
+	uv run uvicorn app.main:app --reload
 
 test:
-	uv run python -m pytest tests -vvu
+	uv run python -m pytest tests -vv
