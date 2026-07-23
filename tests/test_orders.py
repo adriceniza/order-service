@@ -74,3 +74,19 @@ def test_create_order_requires_customer_id():
                 )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
+
+def test_create_order_requires_possitive_quantity():
+    response = client.post(
+                "/orders",
+                json={
+                    "user_id": "u1",
+                    "line_items": [
+                        {
+                            "product_id": "p1",
+                            "quantity": -2,
+                        }
+                    ]
+                }
+                )
+
+    assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
