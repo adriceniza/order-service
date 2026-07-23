@@ -101,3 +101,24 @@ def test_create_order_returns_200_ok():
     response = client.get('/orders/1')
 
     assert response.status_code == status.HTTP_200_OK
+
+def test_get_order_returns_order():
+    create_response = client.post(
+        "/orders",
+        json={
+            "customer_id": "u1",
+            "line_items": [
+                {
+                    "product_id": "milk",
+                    "quantity": 1
+                }
+            ]
+        }
+    )
+
+    order_id = create_response.json()["order_id"]
+
+    get_response = client.get(f"/orders/{order_id}")
+
+    assert get_response.status_code == status.HTTP_200_OK
+    assert get_response.json()["order_id"] == order_id
