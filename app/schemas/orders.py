@@ -1,8 +1,8 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, PositiveInt
 
 class LineItem(BaseModel):
     product_id: str
-    quantity: int
+    quantity: PositiveInt
 
 class OrderCreateRequest(BaseModel):
     user_id: str
