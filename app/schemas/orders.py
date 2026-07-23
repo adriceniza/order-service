@@ -7,3 +7,6 @@ class LineItem(BaseModel):
 class OrderCreateRequest(BaseModel):
     user_id: str
     line_items: list[LineItem]
+
+class OrderCreateResponse(BaseModel):
+    order_id: str
