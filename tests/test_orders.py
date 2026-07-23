@@ -4,6 +4,8 @@ from app.main import app
 
 client = TestClient(app)
 
+# CREATE ORDER
+
 def test_create_order_returns_201_created():
     response = client.post(
         "/orders",
@@ -90,3 +92,12 @@ def test_create_order_requires_possitive_quantity():
                 )
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
+
+
+# READ ORDER
+
+
+def test_create_order_returns_200_ok():
+    response = client.get('/orders/1')
+
+    assert response.status_code == status.HTTP_200_OK
