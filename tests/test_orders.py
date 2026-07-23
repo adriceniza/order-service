@@ -169,3 +169,19 @@ def test_create_order_is_idempotent():
     second_response_body = second_response.json()
 
     assert first_response_body == second_response_body
+
+def test_create_order_idempotency_key_is_required():
+    response = client.post(
+        "/orders",
+        json={
+            "user_id": "u1",
+            "line_items": [
+                {
+                    "product_id": "milk",
+                    "quantity": 1
+                }
+            ]
+        }
+    )
+
+    assert response.status_code == status.HTTP_400_BAD_REQUEST
