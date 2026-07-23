@@ -8,14 +8,14 @@ def test_create_order_returns_201_created():
     response = client.post(
         "/orders",
         json={
-            "user_id": "a1",
+            "user_id": "u1",
             "line_items": [
                 {
-                    "product_id": "1",
+                    "product_id": "p1",
                     "quantity": 1,
                 }
             ]
         }
         )
-
+    
     assert response.status_code == status.HTTP_201_CREATED
