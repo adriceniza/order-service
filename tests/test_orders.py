@@ -136,3 +136,36 @@ def test_get_order_returns_order_id():
     get_response = client.get(f"/orders/{order_id}")
 
     assert get_response.json()["order_id"] == order_id
+
+def test_create_order_is_idempotent():
+    first_response = client.post(
+            "/orders",
+            json={
+                "user_id": "u1",
+                "line_items": [
+                    {
+                        "product_id": "milk",
+                        "quantity": 1
+                    }
+                ]
+            }
+        )
+    
+    first_response_body = first_response.json()
+
+    second_response = client.post(
+                "/orders",
+                json={
+                    "user_id": "u1",
+                    "line_items": [
+                        {
+                            "product_id": "milk",
+                            "quantity": 1
+                        }
+                    ]
+                }
+            )
+        
+    second_response_body = second_response.json()
+
+    assert first_response_body == second_response_body
