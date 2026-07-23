@@ -39,3 +39,23 @@ def test_create_order_returns_order_id():
     assert 'order_id' in body
     assert body["order_id"]
     assert isinstance(body["order_id"], str)
+
+def test_create_order_returns_status():
+    response = client.post(
+            "/orders",
+            json={
+                "user_id": "u1",
+                "line_items": [
+                    {
+                        "product_id": "p1",
+                        "quantity": 1,
+                    }
+                ]
+            }
+            )
+    
+    body = response.json()
+
+    assert 'status' in body
+    assert body["status"]
+    assert isinstance(body["status"], str)
