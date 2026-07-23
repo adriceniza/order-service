@@ -10,3 +10,4 @@ class OrderCreateRequest(BaseModel):
 
 class OrderCreateResponse(BaseModel):
     order_id: str
+    status: str
