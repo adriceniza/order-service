@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from uuid import uuid4
 
+from app.orders.exceptions import CancelledOrderCannotBePaid, OrderAlreadyPaid, ShippedOrderCannotBePaid
+
 class OrderStatus(str):
     CREATED = "created"
     PAID = "paid"
@@ -27,3 +29,17 @@ class Order:
             line_items=line_items,
             status=OrderStatus.CREATED
         )
+
+    def pay(self) -> None:
+        if self.status == OrderStatus.CANCELLED:
+            raise CancelledOrderCannotBePaid(self.order_id)
+
+        if self.status == OrderStatus.SHIPPED:
+            raise ShippedOrderCannotBePaid(self.order_id)
+
+        if self.status == OrderStatus.PAID:
+            raise OrderAlreadyPaid(self.order_id)
+
+        self.status = OrderStatus.PAID
+
+        return

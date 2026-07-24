@@ -89,25 +89,37 @@ def test_create_order_idempotency_key_is_required(create_order, base_order_body)
 def test_pay_order_returns_200(create_order, base_order_body):
     create_response = create_order(base_order_body()).json()
 
-    pay_response = client.post(f'/orders/{create_response["order_id"]}/pay')
+    pay_response = client.post(f'/orders/{create_response["order_id"]}/pay', headers={
+        "Idempotency-Key": str(uuid4())
+    })
 
     assert pay_response.status_code == status.HTTP_200_OK
 
 def test_pay_order_returns_status_paid(create_order, base_order_body):
     create_response = create_order(base_order_body()).json()
-    pay_response = client.post(f'/orders/{create_response["order_id"]}/pay').json()
+    pay_response = client.post(f'/orders/{create_response["order_id"]}/pay', headers={
+        "Idempotency-Key": str(uuid4())
+    }).json()
 
     assert pay_response["status"] == OrderStatus.PAID
 
 def test_pay_not_found_order_returns_404():
-    pay_response = client.post(f'/orders/{str(uuid4())}/pay')
+    pay_response = client.post(f'/orders/{str(uuid4())}/pay', headers={
+        "Idempotency-Key": str(uuid4())
+    })
 
     assert pay_response.status_code == status.HTTP_404_NOT_FOUND
 
 def test_pay_order_twice_returns_409(create_order, base_order_body):
     create_response = create_order(base_order_body()).json()
+    order_id = create_response["order_id"]
 
-    client.post(f'/orders/{create_response["order_id"]}/pay').json()
-    pay_response = client.post(f'/orders/{create_response["order_id"]}/pay')
+    client.post(f'/orders/{order_id}/pay', headers={
+        "Idempotency-Key": str(uuid4())
+    })
+
+    pay_response = client.post(f'/orders/{order_id}/pay', headers={
+        "Idempotency-Key": str(uuid4())
+    })
 
     assert pay_response.status_code == status.HTTP_409_CONFLICT
