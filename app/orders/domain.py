@@ -1,6 +1,11 @@
 from dataclasses import dataclass
 from uuid import uuid4
 
+class OrderStatus(str):
+    CREATED = "created"
+    PAID = "paid"
+    SHIPPED = "shipped"
+    CANCELLED = "cancelled"
 
 @dataclass
 class LineItem:
@@ -20,5 +25,5 @@ class Order:
             order_id= "order_" + str(uuid4()),
             user_id=user_id,
             line_items=line_items,
-            status="created"
+            status=OrderStatus.CREATED
         )
