@@ -1,13 +1,10 @@
 from app.shared.idempotency.repository import IdempotencyRepository
 from app.shared.idempotency.schemas import IdempotencyRecord
-from typing import Generic, TypeVar
+from typing import TypeVar
 
 T = TypeVar("T")
 
-class InMemoryIdempotencyRepository(
-    IdempotencyRepository[T],
-    Generic[T]
-    ):
+class InMemoryIdempotencyRepository(IdempotencyRepository[T]):
     def __init__(self):
         super().__init__()
         self._keys: dict[str, IdempotencyRecord[T]] = {}
