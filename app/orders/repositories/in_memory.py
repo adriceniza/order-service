@@ -1,7 +1,8 @@
 from app.orders.domain import Order
+from app.orders.repositories.repository import OrderRepository
 
 
-class InMemoryOrderRepository:
+class InMemoryOrderRepository(OrderRepository):
 
     def __init__(self):
         self._orders: dict[str, Order] = {}
