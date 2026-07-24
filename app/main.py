@@ -5,7 +5,7 @@ from app.orders.domain import Order
 from app.orders.exceptions import OrderNotFound, ShippedOrderCannotBePaid, OrderAlreadyPaid, CancelledOrderCannotBePaid
 from app.orders.router import create_orders_router
 
-from app.orders.repository import InMemoryOrderRepository
+from app.orders.repositories.in_memory import InMemoryOrderRepository
 from app.shared.idempotency.in_memory import InMemoryIdempotencyRepository
 from app.orders.service import OrderService
 

@@ -1,7 +1,7 @@
 from fastapi import HTTPException, status
 from app.orders.domain import LineItem, Order
 from app.orders.exceptions import OrderNotFound
-from app.orders.repository import InMemoryOrderRepository
+from app.orders.repositories.repository import OrderRepository
 
 from app.shared.idempotency.repository import IdempotencyRepository
 
@@ -12,7 +12,7 @@ logger = logging.getLogger(__name__)
 
 class OrderService:
 
-    def __init__(self, repository: InMemoryOrderRepository, idempotency_repository: IdempotencyRepository[Order]):
+    def __init__(self, repository: OrderRepository, idempotency_repository: IdempotencyRepository[Order]):
         self._repository = repository
         self._idempotency_repository = idempotency_repository
 
