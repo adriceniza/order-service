@@ -1,7 +1,6 @@
 from fastapi import HTTPException, status
 from app.orders.domain import LineItem, Order
 from app.orders.repository import InMemoryOrderRepository
-from uuid import uuid4
 
 from app.shared.idempotency.repository import IdempotencyRepository
 
@@ -20,14 +19,9 @@ class OrderService:
         if existing is not None:
             return existing.response
 
-
-        new_order_id = "order_" + str(uuid4())
-
-        order = Order(
-            order_id=new_order_id,
+        order = Order.create(
             user_id=user_id,
             line_items=line_items,
-            status="creted"
         )
 
         self._repository.save(order)
