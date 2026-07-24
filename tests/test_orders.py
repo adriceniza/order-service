@@ -29,7 +29,7 @@ def test_create_order_returns_status(create_order, base_order_body):
     body = response.json()
 
     assert 'status' in body
-    assert body["status"]
+    assert body["status"] == OrderStatus.CREATED
     assert isinstance(body["status"], str)
 
 def test_create_order_requires_user_id(create_order, base_order_body):
@@ -41,28 +41,6 @@ def test_create_order_requires_possitive_quantity(create_order, base_order_body)
     response = create_order(base_order_body(quantity=-2))
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
-
-
-# READ ORDER
-
-
-def test_create_order_returns_200_ok(create_order, base_order_body):
-    create_response = create_order(base_order_body())
-
-    order_id = create_response.json()["order_id"]
-
-    get_response = client.get(f"/orders/{order_id}")
-
-    assert get_response.status_code == status.HTTP_200_OK
-
-def test_get_order_returns_order_id(create_order, base_order_body):
-    create_response = create_order(base_order_body())
-
-    order_id = create_response.json()["order_id"]
-
-    get_response = client.get(f"/orders/{order_id}")
-
-    assert get_response.json()["order_id"] == order_id
 
 def test_create_order_is_idempotent(create_order, base_order_body):
     first_response = create_order(base_order_body(), headers={
@@ -83,6 +61,65 @@ def test_create_order_idempotency_key_is_required(create_order, base_order_body)
     response = create_order(base_order_body(), headers=None)
 
     assert response.status_code == status.HTTP_422_UNPROCESSABLE_CONTENT
+
+# READ ORDER
+
+def test_get_order_returns_order_id(create_order, base_order_body):
+    create_response = create_order(base_order_body())
+
+    order_id = create_response.json()["order_id"]
+
+    get_response = client.get(f"/orders/{order_id}")
+
+    assert get_response.json()["order_id"] == order_id
+
+def test_get_order_returns_200_ok_after_order_is_created(create_order, base_order_body):
+    create_response = create_order(base_order_body())
+    order_id = create_response.json()["order_id"]
+
+    get_response = client.get(f"/orders/{order_id}")
+
+    assert get_response.status_code == status.HTTP_200_OK
+
+def test_get_order_returns_status(create_order, base_order_body):
+    create_response = create_order(base_order_body())
+    order_id = create_response.json()["order_id"]
+
+    get_response = client.get(f"/orders/{order_id}").json()
+
+    assert "status" in get_response
+    assert isinstance(get_response["status"], str)
+
+
+def test_get_order_returns_user_id(create_order, base_order_body):
+    create_response = create_order(base_order_body(user_id="new_user_123"))
+    order_id = create_response.json()["order_id"]
+
+    get_response = client.get(f"/orders/{order_id}").json()
+
+    assert "user_id" in get_response
+    assert get_response["user_id"] == "new_user_123"
+    assert isinstance(get_response["user_id"], str)
+
+def test_get_order_returns_line_items(create_order, base_order_body):
+    line_items=[{
+        "product_id": "product_1",
+        "quantity": 1
+    }]
+
+    create_response = create_order(base_order_body(product_id="product_1", quantity= 1))
+    order_id = create_response.json()["order_id"]
+
+    get_response = client.get(f"/orders/{order_id}").json()
+
+    assert "line_items" in get_response
+    assert get_response["line_items"] == line_items
+    assert isinstance(get_response["line_items"], list)
+
+def test_get_order_returns_404_when_order_does_not_exist():
+    get_response = client.get(f"/orders/{str(uuid4())}")
+
+    assert get_response.status_code == status.HTTP_404_NOT_FOUND
 
 # PAY ORDER
 
