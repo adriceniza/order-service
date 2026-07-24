@@ -25,5 +25,5 @@ class Order:
             order_id= "order_" + str(uuid4()),
             user_id=user_id,
             line_items=line_items,
-            status=OrderStatus.CANCELLED
+            status=OrderStatus.CREATED
         )
